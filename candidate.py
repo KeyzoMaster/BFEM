@@ -2,13 +2,14 @@ from kivy import app
 from kivy.metrics import dp
 from kivy.properties import NumericProperty, DictProperty, StringProperty
 from kivy.uix.boxlayout import BoxLayout
+from kivy.uix.button import Button
 from kivy.uix.gridlayout import GridLayout
 from kivy.uix.pagelayout import PageLayout
 from kivy.uix.popup import Popup
 from kivy.uix.screenmanager import Screen
 from kivy.uix.scrollview import ScrollView
 from kivy.uix.stacklayout import StackLayout
-from kivy.uix.tabbedpanel import TabbedPanelItem
+from kivy.uix.tabbedpanel import TabbedPanelItem, TabbedPanel
 from kivy.uix.textinput import TextInput
 
 
@@ -37,35 +38,50 @@ class DetailsLine(BoxLayout):
         self.value = value
 
 
-class PersonalDetails(GridLayout):
+class PersonalDetails(TabbedPanelItem):
     details = DictProperty()
 
     def __init__(self, num, **kwargs):
         super().__init__(**kwargs)
+        self.text = "Informations personnelles"
+        self.content = GridLayout(cols=2, spacing=dp(15))
         self.details = {"num": num, "first_name": "First Name", "last_name": "Name", "birth_date": "01/01/2000",
                         "birth_place": "Dakar", "sex": "M", "nationality": "senegalese", "optional_test_choice": True,
                         "optional_test": "Drawing", "can_do_sport": True, "status": "---"}
         for k, v in self.details.items():
-            self.add_widget(DetailsLine(label=str(k), value=str(v)))
+            self.content.add_widget(DetailsLine(label=str(k), value=str(v)))
 
 
-class NotesDetails(GridLayout):
+class NotesDetails(TabbedPanelItem):
     details = DictProperty()
 
     def __init__(self, num, **kwargs):
         super().__init__(**kwargs)
+        self.text = "Informations sur les notes"
+        self.width = self.texture_size[0]
+        self.padding = (10, 0)
+        self.size_hint_x = None
+        self.content = GridLayout(cols=2, spacing=dp(15))
         self.details = {"num": num, "first_name": "First Name", "last_name": "Name", "birth_date": "01/01/2000",
                         "birth_place": "Dakar", "sex": "M", "nationality": "senegalese", "optional_test_choice": True,
                         "optional_test": "Drawing", "can_do_sport": True, "status": "---"}
         for k, v in self.details.items():
-            self.add_widget(DetailsLine(label=str(k), value=str(v)))
+            self.content.add_widget(DetailsLine(label=str(k), value=str(v)))
 
 
-class DetailsContent(PageLayout):
+class DetailsContent(TabbedPanel):
     def __init__(self, num, **kwargs):
         super().__init__(**kwargs)
+        self.do_default_tab = False
         self.add_widget(PersonalDetails(num))
         self.add_widget(NotesDetails(num))
+
+
+class CloseButton(Button):
+    def __init__(self, popup, **kwargs):
+        super().__init__(**kwargs)
+        self.popup = popup
+        self.on_release = self.popup.dismiss
 
 
 class DetailsPopup(Popup):
@@ -77,7 +93,10 @@ class DetailsPopup(Popup):
         self.num = num
         self.title = "Détails sur le candidat"
         self.title_size = dp(25)
-        self.content = DetailsContent(num)
+        self.content = BoxLayout(orientation="vertical")
+        self.content.add_widget(DetailsContent(num, size_hint_y=.9))
+        self.b = CloseButton(popup=self, text="Fermer", size_hint_y=.1)
+        self.content.add_widget(self.b)
 
 
 class UpdateContent(PageLayout):

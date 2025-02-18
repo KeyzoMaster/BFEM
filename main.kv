@@ -4,6 +4,7 @@ WindowManager:
     LoginScreen:
     CandidateScreen:
     FormScreen:
+    CorrectionScreen:
     DeliberationScreen:
     StatistiquesScreen:
 
@@ -30,66 +31,58 @@ WindowManager:
                 pos_hint: {"center_x": 0.5}
                 Label:
                     text: "IA[Région]"
-                    font_size: "30dp"
                 TextInput:
                     multiline: False
-                    font_size: "30dp"
             BoxLayout:
                 size_hint: .8, None
                 height: "45dp"
                 pos_hint: {"center_x": .5}
                 Label:
                     text: "IEF[Département]"
-                    font_size: "30dp"
                 TextInput:
                     multiline: False
-                    font_size: "30dp"
             BoxLayout:
                 size_hint: .8, None
                 height: "45dp"
                 pos_hint: {"center_x": .5}
                 Label:
                     text: "Localité"
-                    font_size: "30dp"
                 TextInput:
                     multiline: False
-                    font_size: "30dp"
             BoxLayout:
                 size_hint: .8, None
                 height: "45dp"
                 pos_hint: {"center_x": .5}
                 Label:
                     text: "Centre d'examen"
-                    font_size: "30dp"
                 TextInput:
                     multiline: False
-                    font_size: "30dp"
+
             BoxLayout:
                 size_hint: .8, None
                 height: "45dp"
                 pos_hint: {"center_x": .5}
                 Label:
                     text: "Président de Jury"
-                    font_size: "30dp"
+
                 TextInput:
                     multiline: False
-                    font_size: "30dp"
+
             BoxLayout:
                 size_hint: .8, None
                 height: "45dp"
                 pos_hint: {"center_x": .5}
                 Label:
                     text: "Numéro de téléphone"
-                    font_size: "30dp"
+
                 TextInput:
                     multiline: False
-                    font_size: "30dp"
+
             Button:
                 size_hint: 0.6, None
                 pos_hint: {"center_x": .5}
                 height: "50dp"
                 text: "Se connecter"
-                font_size: "30dp"
                 on_release: app.root.current="candidate"
 
 # ------------------------- Candidate --------------------------------------------------------------------
@@ -100,23 +93,17 @@ WindowManager:
     spacing: "5dp"
     Label:
         text: str(root.num)
-        font_size: "30dp"
     Label:
         text: root.first_name
-        font_size: "30dp"
     Label:
         text: root.last_name
-        font_size: "30dp"
     Label:
         text: root.status
-        font_size: "30dp"
     Button:
         text : "Details"
-        font_size: "30dp"
         on_release: Factory.DetailsPopup(root.num).open()
     Button:
         text: "Modifier"
-        font_size: "30dp"
         on_release: Factory.UpdatePopup(root.num).open()
 
 <DetailsLine>:
@@ -124,17 +111,12 @@ WindowManager:
     height: "45dp"
     Label:
         text: root.label
-        font_size: "30dp"
     Label:
         text: root.value
-        font_size: "30dp"
 
-<PersonalDetails, NotesDetails>:
-    cols: 2
 
 <FormScreen>:
     name: "form"
-    spacing: "20dp"
     id: cand_form
     BoxLayout:
         orientation: "vertical"
@@ -143,6 +125,7 @@ WindowManager:
             size_hint: 1, None
             height: "40dp"
         StackLayout:
+            spacing: "20dp"
             canvas:
                 Color:
                     rgba: 0.7, 0.45, 0.52, .7
@@ -152,196 +135,161 @@ WindowManager:
                 cols: 2
                 spacing: "10dp"
                 size_hint: 1, None
-                height: "45dp"
+                height: "30"
                 BoxLayout:
                     Label:
                         text: "Prénom(s)"
-                        font_size: "30dp"
+
                     TextInput:
-                        font_size: "30dp"
+
                         multiline: False
                 BoxLayout:
                     Label:
                         text: "Nom"
-                        font_size: "30dp"
+
                     TextInput:
-                        font_size: "30dp"
+
                         multiline: False
             BoxLayout:
                 size_hint: 1, None
-                height: "45dp"
+                height: "30"
                 Label:
                     text: "Sexe"
-                    font_size: "30dp"
+
                 CheckBox:
                     group: "sex"
                 Label:
                     text: "Oui"
-                    font_size: "30dp"
+
                 CheckBox:
                     group: "sex"
                 Label:
                     text: "Non"
-                    font_size: "30dp"
             GridLayout:
                 cols: 3
                 spacing: "10dp"
                 size_hint: 1, None
-                height: "45dp"
+                height: "30"
                 BoxLayout:
                     Label:
                         text: "Date de naissance"
-                        font_size: "30dp"
+
                     TextInput:
-                        font_size: "30dp"
+
                         multiline: False
                 BoxLayout:
                     Label:
                         text: "Lieu de naissance"
-                        font_size: "30dp"
                     TextInput:
-                        font_size: "30dp"
                         multiline: False
                 BoxLayout:
                     Label:
                         text: "Nationalité"
-                        font_size: "30dp"
                     TextInput:
-                        font_size: "30dp"
                         multiline: False
             GridLayout:
                 cols: 2
                 size_hint: 1, None
                 pos_hint: {"x": 0}
-                height: "45dp"
+                height: "30"
                 Label:
-                    halign: "left"
                     text: "Nombre de fois"
-                    font_size: "30dp"
                 TextInput:
-                    font_size: "30dp"
                     size_hint: None, 1
                     width: "50dp"
                     multiline: False
             BoxLayout:
                 size_hint: 1, None
-                height: "45dp"
+                height: "30"
                 Label:
                     text: "Epreuve facultative"
-                    font_size: "30dp"
                 CheckBox:
                     group: "optional"
-                    font_size: "30dp"
                 Label:
                     text: "Oui"
-                    font_size: "30dp"
                 CheckBox:
                     group: "optional"
                 Label:
                     text: "Non"
-                    font_size: "30dp"
             BoxLayout:
                 size_hint: 1, None
-                height: "45dp"
+                height: "30"
                 Label:
                     text: "Type de candidat"
-                    font_size: "30dp"
                 CheckBox:
                     group: "type"
-                    font_size: "30dp"
                 Label:
                     text: "Officiel"
-                    font_size: "30dp"
                 CheckBox:
                     group: "type"
                 Label:
                     text: "Individuel"
-                    font_size: "30dp"
             GridLayout:
                 cols: 2
                 spacing: "10dp"
                 size_hint: 1, None
-                height: "45dp"
+                height: "30"
                 BoxLayout:
                     Label:
                         text: "Epreuve facultative"
-                        font_size: "30dp"
                     CheckBox:
                         group: "opt_choice"
-                        font_size: "30dp"
                     Label:
                         text: "Oui"
-                        font_size: "30dp"
                     CheckBox:
                         group: "opt_choice"
                     Label:
                         text: "Non"
-                        font_size: "30dp"
                 BoxLayout:
                     Label:
                         text: "Aptitude sportive"
-                        font_size: "30dp"
                     CheckBox:
                         group: "sport"
-                        font_size: "30dp"
                     Label:
                         text: "Oui"
-                        font_size: "30dp"
                     CheckBox:
                         group: "sport"
                     Label:
                         text: "Non"
-                        font_size: "30dp"
             GridLayout:
                 cols: 2
                 spacing: "10dp"
                 size_hint: 1, None
-                height: "45dp"
+                height: "30"
                 BoxLayout:
                     Label:
                         text: "Nombre de fois"
-                        font_size: "30dp"
                     TextInput:
-                        font_size: "30dp"
                         multiline: False
                 BoxLayout:
                     Label:
                         text: "Choix épreuve facultative"
-                        font_size: "30dp"
                     TextInput:
-                        font_size: "30dp"
                         multiline: False
             GridLayout:
                 cols: 5
                 spacing: "10dp"
                 size_hint: 1, None
-                height: "45dp"
+                height: "30dp"
                 Label:
                     text: "Moyennes"
-                    font_size: "30dp"
+                    size_hint: 0.2, 1
+                    pos_hint: {"x":0}
                 TextInput:
                     text: "6e"
-                    size_hint: None, 1
-                    width: "100dp"
-                    font_size: "30dp"
+                    size_hint: .2, 1
                     multiline: False
                 TextInput:
                     text: "5e"
-                    size_hint: None, 1
-                    width: "100dp"
-                    font_size: "30dp"
+                    size_hint: .2, 1
                     multiline: False
                 TextInput:
                     text: "4e"
-                    size_hint: None, 1
-                    width: "100dp"
-                    font_size: "30dp"
+                    size_hint: .2, 1
                     multiline: False
                 TextInput:
                     text: "3e"
-                    size_hint: None, 1
-                    width: "100dp"
-                    font_size: "30dp"
+                    size_hint: .2, 1
                     multiline: False
         BoxLayout:
             size_hint: 1, None
@@ -350,39 +298,34 @@ WindowManager:
             height: "40dp"
             Button:
                 text:"Réinitialiser"
-                font_size: "30dp"
                 on_release: cand_form.on_reset()
             Button:
                 text: "Soumettre"
-                font_size: "30dp"
                 on_release:
                     app.root.current="candidate"
                     root.manager.transition.direction = "right"
 
 <CandidateScreen>:
     name: "candidate"
+    id: cand_screen
     BoxLayout:
         orientation: "vertical"
         spacing: "15dp"
         BoxLayout:
             size_hint: 1, None
-            height: "45dp"
+            height: "30"
             Label:
                 size_hint: 0.1, 1
                 text: "Numero"
-                font_size: "30dp"
             Label:
                 size_hint: 0.3, 1
                 text: "Prénom(s)"
-                font_size: "30dp"
             Label:
                 size_hint: 0.2, 1
                 text: "Nom"
-                font_size: "30dp"
             Label:
                 size_hint: 0.2, 1
                 text: "Statut"
-                font_size: "30dp"
             Label:
                 size_hint: 0.2, 1
         ScrollView:
@@ -393,32 +336,78 @@ WindowManager:
             height: "40dp"
             Button:
                 text: "Imprimer liste des candidats"
-                font_size: "30dp"
                 on_release:
             Button:
                 text: "Ajouter un candidat"
-                font_size: "30dp"
                 on_release:
                     app.root.current = "form"
+                    root.manager.transition.direction = "left"
+            Button:
+                text: cand_screen.my_text
+                on_release:
+                    app.root.current = cand_screen.my_text.lower()
+                    root.manager.transition.direction = "left"
+            Button:
+                text: "Ajouter un candidat"
+                on_release:
+                    app.root.current = "statistiques"
                     root.manager.transition.direction = "left"
 
 # --------------------Correction--------------------------------------------------------------------------
 
 <CorrectionScreen>:
     name: "correction"
-    Label:
-        text: "Work in progress"
+    BoxLayout:
+        Label:
+            text: "Work in progress"
+        Button:
+            text: "Go Back"
+            on_release:
+                app.root.get_screen("candidate").refresh()
+                app.root.current = "candidate"
+                root.manager.transition.direction = "right"
 
 #---------------------Deliberation------------------------------------------------------------------------
 
 <DeliberationScreen>:
     name: "deliberation"
-    Label:
-        text: "Work in progress"
+    BoxLayout:
+        Label:
+            text: "Work in progress"
+        Button:
+            text: "Go Back"
+            on_release:
+                app.root.get_screen("candidate").refresh()
+                app.root.current = "candidate"
+                root.manager.transition.direction = "right"
 
 # --------------------Statistics--------------------------------------------------------------------------
 
-<Statistiques>:
-    name: "statistiques"
+<StatsTabPanel>:
+    do_default_tab: False
+    CandidateStatsItem:
+    DeliberationStatsItem:
+
+<CandidateStatsItem>:
+    text: "Candidats"
     Label:
-        text: "Work in progress"
+        text: "Candidates stats"
+
+
+<DeliberationStatsItem>:
+    text: "Délibération"
+    Label:
+        text: "Deliberation stats"
+
+<StatistiquesScreen>:
+    name: "statistiques"
+    BoxLayout:
+        orientation: "vertical"
+        StatsTabPanel:
+            size_hint: 1, .9
+        Button:
+            size_hint: 1, .1
+            text: "Go Back"
+            on_release:
+                app.root.current = "candidate"
+                root.manager.transition.direction = "right"
