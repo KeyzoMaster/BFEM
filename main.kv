@@ -155,16 +155,17 @@ WindowManager:
                 height: "30"
                 Label:
                     text: "Sexe"
-
+                CheckBox:
+                    group: "sex"
+                    is_active: True
+                Label:
+                    text: "Masculin"
+                    halign: "left"
                 CheckBox:
                     group: "sex"
                 Label:
-                    text: "Oui"
-
-                CheckBox:
-                    group: "sex"
-                Label:
-                    text: "Non"
+                    text: "Feminin"
+                    halign: "left"
             GridLayout:
                 cols: 3
                 spacing: "10dp"
@@ -173,9 +174,7 @@ WindowManager:
                 BoxLayout:
                     Label:
                         text: "Date de naissance"
-
                     TextInput:
-
                         multiline: False
                 BoxLayout:
                     Label:
@@ -297,7 +296,7 @@ WindowManager:
             spacing: "10dp"
             height: "40dp"
             Button:
-                text:"Réinitialiser"
+                text: "Réinitialiser"
                 on_release: cand_form.on_reset()
             Button:
                 text: "Soumettre"
@@ -348,7 +347,7 @@ WindowManager:
                     app.root.current = cand_screen.my_text.lower()
                     root.manager.transition.direction = "left"
             Button:
-                text: "Ajouter un candidat"
+                text: "Statistiques"
                 on_release:
                     app.root.current = "statistiques"
                     root.manager.transition.direction = "left"
@@ -390,14 +389,30 @@ WindowManager:
 
 <CandidateStatsItem>:
     text: "Candidats"
-    Label:
-        text: "Candidates stats"
+    BoxLayout:
+        orientation: "vertical"
+        Label:
+            text: "Répartition par genre"
+        Label:
+            text: "Répartition par type de candidats"
+        Label:
+            text: "Répartition par nombre de tentatives"
+        Label:
+            text: "Répartition par aptitude sportive"
+        Label:
+            text: "Répartition par épreuve facultative"
+        Label:
+            text: "Répartition par nationalité"
 
 
 <DeliberationStatsItem>:
     text: "Délibération"
-    Label:
-        text: "Deliberation stats"
+    BoxLayout:
+        orientation: "vertical"
+        Label:
+            text: "Répartition par résultats au premier tour" # admis au premier tour, repeché au premier tour, autorisé au second tour, ajourné
+        Label:
+            text: "Répartition par résultats au second tour tour" # admis au second tour, repeché au second tour, ajourné
 
 <StatistiquesScreen>:
     name: "statistiques"
