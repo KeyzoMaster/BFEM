@@ -3,10 +3,9 @@ from kivy.properties import StringProperty
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.screenmanager import ScreenManager, Screen
 from kivy.factory import Factory
-from seobject import kwargs
-
 import candidate
 import statistiques
+import impress
 
 from kivy.config import Config
 

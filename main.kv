@@ -1,4 +1,5 @@
 #:import Factory kivy.factory.Factory
+#:import ImpressBFEM impress.ImpressBFEM
 
 WindowManager:
     LoginScreen:
@@ -32,6 +33,7 @@ WindowManager:
                 Label:
                     text: "IA[Région]"
                 TextInput:
+                    id: ia
                     multiline: False
             BoxLayout:
                 size_hint: .8, None
@@ -40,6 +42,7 @@ WindowManager:
                 Label:
                     text: "IEF[Département]"
                 TextInput:
+                    id: ief
                     multiline: False
             BoxLayout:
                 size_hint: .8, None
@@ -56,18 +59,17 @@ WindowManager:
                 Label:
                     text: "Centre d'examen"
                 TextInput:
+                    id: center
                     multiline: False
-
             BoxLayout:
                 size_hint: .8, None
                 height: "45dp"
                 pos_hint: {"center_x": .5}
                 Label:
                     text: "Président de Jury"
-
                 TextInput:
+                    id: jury
                     multiline: False
-
             BoxLayout:
                 size_hint: .8, None
                 height: "45dp"
@@ -83,7 +85,10 @@ WindowManager:
                 pos_hint: {"center_x": .5}
                 height: "50dp"
                 text: "Se connecter"
-                on_release: app.root.current="candidate"
+                on_release:
+                    ImpressBFEM.liste_candidat(None, ia.text, ief.text, center.text, jury.text)
+                    app.root.current="candidate"
+
 
 # ------------------------- Candidate --------------------------------------------------------------------
 
@@ -139,16 +144,12 @@ WindowManager:
                 BoxLayout:
                     Label:
                         text: "Prénom(s)"
-
                     TextInput:
-
                         multiline: False
                 BoxLayout:
                     Label:
                         text: "Nom"
-
                     TextInput:
-
                         multiline: False
             BoxLayout:
                 size_hint: 1, None
@@ -370,10 +371,14 @@ WindowManager:
 
 <DeliberationScreen>:
     name: "deliberation"
+    orientation: "vertical"
     BoxLayout:
-        Label:
+        GridLayout:
+            cols: 3
+            size_hint_y: .9
             text: "Work in progress"
         Button:
+            size_hint_y: .1
             text: "Go Back"
             on_release:
                 app.root.get_screen("candidate").refresh()

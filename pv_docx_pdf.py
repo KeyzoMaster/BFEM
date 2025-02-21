@@ -44,10 +44,10 @@ cur.execute(
     Coef9) +(Anglais_Orale * Coef10) + CASE WHEN EPS > 10 THEN (EPS - 10) ELSE (10 - EPS) END) AS total_point FROM 
     Note inner join Candidat)""")
 total = cur.fetchall()
-table_Office = document.add_table()
+table_Office = document.add_table(rows=1, cols=13)
 table_Office.style = 'Table Grid'
 document.add_heading('ADMIS AU 2ND TOUR', 4)
-table_2tour = document.add_table()
+table_2tour = document.add_table(rows=1, cols=13)
 table_2tour.style = 'Table Grid'
 for row in total:
     for total_point in row:
@@ -58,12 +58,12 @@ for row in total:
         else:
             print("")
 
-document.save('C:/Users/TBE/Documents/impression_pv.docx')
+document.save('impression_pv.docx')
 
 # convertir le document .docx en .pdf
 
-chemin_word = "C:/Users/TBE/Documents/impression_pv.docx"
-chemin_pdf = "C:/Users/TBE/Documents/impression_pv.pdf"
+chemin_word = "impression_pv.docx"
+chemin_pdf = "impression_pv.pdf"
 
 convert(chemin_word, chemin_pdf)
 
