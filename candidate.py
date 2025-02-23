@@ -12,7 +12,7 @@ from kivy.uix.stacklayout import StackLayout
 from kivy.uix.tabbedpanel import TabbedPanelItem, TabbedPanel
 from kivy.uix.textinput import TextInput
 
-from database import BFEMDB
+from database import BrevetDB
 
 
 class CandidateLine(BoxLayout):
@@ -23,12 +23,12 @@ class CandidateLine(BoxLayout):
 
     def __init__(self, num, **kwargs):
         super().__init__(**kwargs)
-        basic_infos = BFEMDB().basic_information_candidat(num)
+        basic_infos = BrevetDB().basic_information_candidat(num)
         self.num = int(num)
         # fonction qui récupère les autres informations
         self.first_name = basic_infos[0]
         self.last_name = basic_infos[1]
-        self.status = "---"
+        self.status = basic_infos[3]
 
 
 class DetailsLine(BoxLayout):

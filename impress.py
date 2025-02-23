@@ -1,13 +1,14 @@
-from database import BFEMDB
+from database import BrevetDB
 from docx import Document
 from docx2pdf import convert
 from docx.enum.text import WD_ALIGN_PARAGRAPH
 
 
 class ImpressBFEM:
-    def liste_candidat(self, ia, ief, center, jury):
-        db_connection = BFEMDB()
+    def liste_candidats(self):
         document = Document()
+        (ia, ief, localite, centre, president, tel) = BrevetDB().cursor.execute("""SELECT ia, ief, localite, 
+        centre_examen, president_jury, telephone FROM Jury""")
         titre = document.add_heading("OFFICE du BFEM", 1)
         titre.alignment = WD_ALIGN_PARAGRAPH.CENTER
         # les informations du jury et du centre d'examen
@@ -25,12 +26,21 @@ class ImpressBFEM:
         list_paragraph.add_run(ief)
         list_paragraph.add_run('\n')
         list_paragraph.add_run('\n')
+        list_paragraph.add_run('Localité').bold = True
+        list_paragraph.add_run(localite)
+        list_paragraph.add_run('\n')
+        list_paragraph.add_run('\n')
         list_paragraph.add_run('Centre d\'Examen:').bold = True
-        list_paragraph.add_run(center)
+        list_paragraph.add_run(centre)
         list_paragraph.add_run('\n')
         list_paragraph.add_run('\n')
-        list_paragraph.add_run('JURY:').bold = True
-        list_paragraph.add_run(jury)
+        list_paragraph.add_run('Président du Jury').bold = True
+        list_paragraph.add_run(president)
+        list_paragraph.add_run('\n')
+        list_paragraph.add_run('\n')
+        list_paragraph.add_run('Téléphone').bold = True
+        list_paragraph.add_run(tel)
+        list_paragraph.add_run('\n')
         list_paragraph.add_run('\n')
 
         # liste des candidats et les anonymats
@@ -47,7 +57,7 @@ class ImpressBFEM:
         # for i in range(13):
         # heading_cells[i].text = str(heading_content[i])
 
-        table1 = db_connection.complete_information_liste()
+        table1 = BrevetDB().complete_information_liste()
         for row in table1:
             cells = table.add_row().cells
             for i in range(len(row)):
