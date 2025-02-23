@@ -1,5 +1,6 @@
 #:import Factory kivy.factory.Factory
 #:import ImpressBFEM impress.ImpressBFEM
+#:import BFEMDB database.BFEMDB
 
 WindowManager:
     LoginScreen:
@@ -86,7 +87,7 @@ WindowManager:
                 height: "50dp"
                 text: "Se connecter"
                 on_release:
-                    ImpressBFEM.liste_candidat(None, ia.text, ief.text, center.text, jury.text)
+                    ImpressBFEM().liste_candidat(ia.text, ief.text, center.text, jury.text)
                     app.root.current="candidate"
 
 
@@ -94,10 +95,11 @@ WindowManager:
 
 <CandidateLine>
     size_hint: 1, None
-    height: "45dp"
+    height: 45
     spacing: "5dp"
     Label:
         text: str(root.num)
+        pos_hint: {"x":0}
     Label:
         text: root.first_name
     Label:
@@ -118,6 +120,35 @@ WindowManager:
         text: root.label
     Label:
         text: root.value
+
+<PersonalInfosFormBox@BoxLayout>:
+    orientation: "vertical"
+    spacing: "20dp"
+    BoxLayout:
+        Label:
+            text: "Prénom(s)"
+        TextInput:
+            multiline: False
+    BoxLayout:
+        Label:
+            text: "Nom"
+        TextInput:
+            multiline: False
+    BoxLayout:
+        Label:
+            text: "Sexe"
+        BoxLayout:
+            CheckBox:
+                group: "sex"
+                is_active: True
+            Label:
+                text: "Masculin"
+                halign: "left"
+        CheckBox:
+            group: "sex"
+        Label:
+            text: "Feminin"
+            halign: "left"
 
 
 <FormScreen>:
@@ -330,7 +361,8 @@ WindowManager:
                 size_hint: 0.2, 1
         ScrollView:
             CandidatesStack:
-                size_hint: 1, 0.9
+                size_hint: 1, None
+                height: self.minimum_height
         BoxLayout:
             size_hint: 1, None
             height: "40dp"
@@ -354,10 +386,13 @@ WindowManager:
                     root.manager.transition.direction = "left"
 
 # --------------------Correction--------------------------------------------------------------------------
+<CorrectionTabPanel>
+    do_default_tab: False
 
 <CorrectionScreen>:
     name: "correction"
     BoxLayout:
+        orientation: "vertical"
         Label:
             text: "Work in progress"
         Button:

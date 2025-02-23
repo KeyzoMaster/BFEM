@@ -47,7 +47,7 @@ class ImpressBFEM:
         # for i in range(13):
         # heading_cells[i].text = str(heading_content[i])
 
-        table1 = db_connection.complete_information_candidat()
+        table1 = db_connection.complete_information_liste()
         for row in table1:
             cells = table.add_row().cells
             for i in range(len(row)):
@@ -57,3 +57,20 @@ class ImpressBFEM:
         signe.alignment = WD_ALIGN_PARAGRAPH.RIGHT
 
         document.save('impression_candidat.docx')
+
+        # TITRE de fichier
+
+        # convertir le document .docx en document .pdf
+        chemin_word = "impression_candidat.docx"
+        chemin_pdf = "impression_candidat.pdf"
+
+        convert(chemin_word, chemin_pdf)
+
+    def liste_anonymats(self):
+        pass
+
+    def releve_note(self,num_table):
+        pass
+
+    def pv_bfem(self):
+        pass

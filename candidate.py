@@ -12,6 +12,8 @@ from kivy.uix.stacklayout import StackLayout
 from kivy.uix.tabbedpanel import TabbedPanelItem, TabbedPanel
 from kivy.uix.textinput import TextInput
 
+from database import BFEMDB
+
 
 class CandidateLine(BoxLayout):
     num = NumericProperty()
@@ -21,10 +23,11 @@ class CandidateLine(BoxLayout):
 
     def __init__(self, num, **kwargs):
         super().__init__(**kwargs)
-        self.num = num
+        basic_infos = BFEMDB().basic_information_candidat(num)
+        self.num = int(num)
         # fonction qui récupère les autres informations
-        self.first_name = "First Name"
-        self.last_name = "Last Name"
+        self.first_name = basic_infos[0]
+        self.last_name = basic_infos[1]
         self.status = "---"
 
 
@@ -133,5 +136,6 @@ class FormScreen(Screen):
 class CandidatesStack(StackLayout):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        for i in range(0, 10):
-            self.add_widget(CandidateLine(i))
+        nums = BFEMDB().liste_num()
+        for num in nums:
+            self.add_widget(CandidateLine(num))
