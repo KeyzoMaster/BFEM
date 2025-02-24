@@ -7,6 +7,7 @@ from correction import *
 import candidate
 import statistiques
 import impress
+from form import *
 
 from kivy.config import Config
 
@@ -36,22 +37,9 @@ class CandidateScreen(Screen):
         self.__init__()
 
 
-class FormScreen(Screen):
-    pass
-
-
 class CorrectionScreen(Screen):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        liste_matieres_premier_tour = {"Compo_Franc": "Composition française", "Dictee": "Dictée",
-                                       "Etude_de_texte": "Etude de texte", "Instruction_Civique": "Instruction Civique",
-                                       "Histoire_Geographie": "Histoire/Géographie", "Mathematiques": "Mathématiques",
-                                       "PC_LV2": "PC LV2", "SVT": "SVT", "Anglais1": "Anglais 1",
-                                       "Anglais_orale": "Orale d'Anglais", "EPS": "EPS",
-                                       "Epreuve_Facultative": "Epreuve Facultative"}
-        liste_matieres_second_tour = {"": ""}
-        self.add_widget(CorrectionTabPanel("Premier tour", "Second tour", liste_matieres_premier_tour,
-                                           liste_matieres_second_tour))
 
 
 class DeliberationScreen(Screen):

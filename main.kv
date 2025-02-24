@@ -1,6 +1,6 @@
 #:import Factory kivy.factory.Factory
 #:import ImpressBFEM impress.ImpressBFEM
-#:import BFEMDB database.BFEMDB
+#:import BrevetDB database.BrevetDB
 
 WindowManager:
     LoginScreen:
@@ -52,6 +52,7 @@ WindowManager:
                 Label:
                     text: "Localité"
                 TextInput:
+                    id: localite
                     multiline: False
             BoxLayout:
                 size_hint: .8, None
@@ -60,7 +61,7 @@ WindowManager:
                 Label:
                     text: "Centre d'examen"
                 TextInput:
-                    id: center
+                    id: centre
                     multiline: False
             BoxLayout:
                 size_hint: .8, None
@@ -69,7 +70,7 @@ WindowManager:
                 Label:
                     text: "Président de Jury"
                 TextInput:
-                    id: jury
+                    id: president
                     multiline: False
             BoxLayout:
                 size_hint: .8, None
@@ -77,17 +78,16 @@ WindowManager:
                 pos_hint: {"center_x": .5}
                 Label:
                     text: "Numéro de téléphone"
-
                 TextInput:
+                    id: tel
                     multiline: False
-
             Button:
                 size_hint: 0.6, None
                 pos_hint: {"center_x": .5}
                 height: "50dp"
                 text: "Se connecter"
                 on_release:
-                    ImpressBFEM().liste_candidat(ia.text, ief.text, center.text, jury.text)
+                    # BrevetDB().ajouter_jury(ia.text, ief.text, localite.text, centre.text, president.text, tel.text )
                     app.root.current="candidate"
 
 
@@ -99,13 +99,21 @@ WindowManager:
     spacing: "5dp"
     Label:
         text: str(root.num)
+        halign: "left"
+        on_size: self.text_size = self.size
         pos_hint: {"x":0}
     Label:
         text: root.first_name
+        halign: "left"
+        on_size: self.text_size = self.size
     Label:
         text: root.last_name
+        halign: "left"
+        on_size: self.text_size = self.size
     Label:
         text: root.status
+        halign: "left"
+        on_size: self.text_size = self.size
     Button:
         text : "Details"
         on_release: Factory.DetailsPopup(root.num).open()
@@ -120,104 +128,144 @@ WindowManager:
         text: root.label
     Label:
         text: root.value
+# -------------------------------------------Form----------------------------------------------------
+<FullNameBox>:
+    size_hint_y: None
+    spacing: "10dp"
+    height: "30dp"
+    Label:
+        text: "Prénom(s):"
+    TextInput:
+        size_hint_y: None
+        height: "30dp"
+        multiline: False
+    Label:
+        text: "Nom:"
+    TextInput:
+        size_hint_y: None
+        height: "30dp"
+        multiline: False
 
-<PersonalInfosFormBox@BoxLayout>:
-    orientation: "vertical"
-    spacing: "20dp"
-    BoxLayout:
+<SexBox>:
+    size_hint_y: None
+    height: "30dp"
+    Label:
+        text: "Masculin"
+    CheckBox:
+        group: "sex"
+        active: True
+        on_active: root.set_sex("M")
+    Label:
+        text: "Feminin"
+    CheckBox:
+        group: "sex"
+        on_active: root.set_sex("F")
+
+<BirthBox>:
+    size_hint_y: None
+    height: "30dp"
+    Label:
+        text: "Date de naissance:"
+    TextInput:
+        multiline: False
+        on_text: root.birth_date = self.text
+    Label:
+        text: "Lieu de naissance:"
+    TextInput:
+        multiline: False
+        on_text: root.birth_place = self.text
+
+<NationalityAndSchoolBox>:
+    size_hint_y: None
+    height: "30dp"
+    Label:
+        text: "Nationalité:"
+    TextInput:
+        multiline: False
+        on_text: root.nationality = self.text
+    Label:
+        text: "Lieu de naissance:"
+    TextInput:
+        multiline: False
+        on_text: root.school = self.text
+
+<OptionalTestBox>:
         Label:
-            text: "Prénom(s)"
-        TextInput:
-            multiline: False
-    BoxLayout:
-        Label:
-            text: "Nom"
-        TextInput:
-            multiline: False
-    BoxLayout:
-        Label:
-            text: "Sexe"
-        BoxLayout:
-            CheckBox:
-                group: "sex"
-                is_active: True
-            Label:
-                text: "Masculin"
-                halign: "left"
+            text: "Neutre"
         CheckBox:
-            group: "sex"
+            group: "optional"
+            active: True
+            on_active: root.option_value(None)
         Label:
-            text: "Feminin"
-            halign: "left"
+            text: "Dessin"
+        CheckBox:
+            group: "optional"
+            on_active: root.option_value("DESSIN")
+        Label:
+            text: "Couture"
+        CheckBox:
+            group: "optional"
+            on_active: root.option_value("COUTURE")
+        Label:
+            text: "Musique"
+        CheckBox:
+            group: "optional"
+            on_active: root.option_value("MUSIQUE")
+
+<AbilityBox>:
+    Label:
+        text: "Apte"
+    CheckBox:
+        group: "aptitude"
+        active: True
+        on_active: root.aptitude_value("APTE")
+    Label:
+        text: "Inapte"
+    CheckBox:
+        group: "aptitude"
+        on_active: root.aptitude_value("INAPTE")
+
+<CandidateTypeBox>:
 
 
-<FormScreen>:
+<AttemptAndAvgBox>:
+
+
+<FormScreen@Screen>:
     name: "form"
     id: cand_form
     BoxLayout:
         orientation: "vertical"
-        Label:
-            text: "Ajout d un nouveau candidat"
-            size_hint: 1, None
-            height: "40dp"
         StackLayout:
             spacing: "20dp"
             canvas:
                 Color:
-                    rgba: 0.7, 0.45, 0.52, .7
+                    rgba: 0.4, 0.45, 0.52, .7
                 Rectangle:
                     size: root.size
-            GridLayout:
-                cols: 2
-                spacing: "10dp"
+            Label:
+                text: "Ajout d'un nouveau candidat"
                 size_hint: 1, None
-                height: "30"
-                BoxLayout:
-                    Label:
-                        text: "Prénom(s)"
-                    TextInput:
-                        multiline: False
-                BoxLayout:
-                    Label:
-                        text: "Nom"
-                    TextInput:
-                        multiline: False
-            BoxLayout:
-                size_hint: 1, None
-                height: "30"
-                Label:
-                    text: "Sexe"
-                CheckBox:
-                    group: "sex"
-                    is_active: True
-                Label:
-                    text: "Masculin"
-                    halign: "left"
-                CheckBox:
-                    group: "sex"
-                Label:
-                    text: "Feminin"
-                    halign: "left"
-            GridLayout:
-                cols: 3
-                spacing: "10dp"
-                size_hint: 1, None
-                height: "30"
-                BoxLayout:
-                    Label:
-                        text: "Date de naissance"
-                    TextInput:
-                        multiline: False
-                BoxLayout:
-                    Label:
-                        text: "Lieu de naissance"
-                    TextInput:
-                        multiline: False
-                BoxLayout:
-                    Label:
-                        text: "Nationalité"
-                    TextInput:
-                        multiline: False
+                font_size: "40dp"
+                height: "40dp"
+            FullNameBox:
+                size_hint_y: None
+                height: self.height
+            SexBox:
+                size_hint_y: None
+                height: self.height
+            BirthBox:
+                size_hint_y: None
+                height: self.height
+            NationalityAndSchoolBox:
+                size_hint_y: None
+                height: self.height
+            OptionalTestBox:
+                size_hint_y: None
+                height: self.height
+            AbilityBox:
+                size_hint_y: None
+                height: self.height
             GridLayout:
                 cols: 2
                 size_hint: 1, None
@@ -231,20 +279,7 @@ WindowManager:
                     multiline: False
             BoxLayout:
                 size_hint: 1, None
-                height: "30"
-                Label:
-                    text: "Epreuve facultative"
-                CheckBox:
-                    group: "optional"
-                Label:
-                    text: "Oui"
-                CheckBox:
-                    group: "optional"
-                Label:
-                    text: "Non"
-            BoxLayout:
-                size_hint: 1, None
-                height: "30"
+                height: "30dp"
                 Label:
                     text: "Type de candidat"
                 CheckBox:
@@ -329,7 +364,7 @@ WindowManager:
             height: "40dp"
             Button:
                 text: "Réinitialiser"
-                on_release: cand_form.on_reset()
+                on_release:
             Button:
                 text: "Soumettre"
                 on_release:
@@ -349,7 +384,7 @@ WindowManager:
                 size_hint: 0.1, 1
                 text: "Numero"
             Label:
-                size_hint: 0.3, 1
+                size_hint: 0.4, 1
                 text: "Prénom(s)"
             Label:
                 size_hint: 0.2, 1
@@ -358,7 +393,7 @@ WindowManager:
                 size_hint: 0.2, 1
                 text: "Statut"
             Label:
-                size_hint: 0.2, 1
+                size_hint: 0.1, 1
         ScrollView:
             CandidatesStack:
                 size_hint: 1, None

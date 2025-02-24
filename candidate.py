@@ -11,7 +11,6 @@ from kivy.uix.scrollview import ScrollView
 from kivy.uix.stacklayout import StackLayout
 from kivy.uix.tabbedpanel import TabbedPanelItem, TabbedPanel
 from kivy.uix.textinput import TextInput
-
 from database import BrevetDB
 
 
@@ -28,7 +27,7 @@ class CandidateLine(BoxLayout):
         # fonction qui récupère les autres informations
         self.first_name = basic_infos[0]
         self.last_name = basic_infos[1]
-        self.status = basic_infos[3]
+        self.status = basic_infos[2]
 
 
 class DetailsLine(BoxLayout):
@@ -125,17 +124,9 @@ class UpdatePopup(Popup):
         self.content = UpdateContent(num)
 
 
-class FormScreen(Screen):
-    def on_reset(self):
-        print("Form reset")
-
-    def on_submit(self):
-        print("Form submitted")
-
-
 class CandidatesStack(StackLayout):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        nums = BFEMDB().liste_num()
+        nums = BrevetDB().liste_num()
         for num in nums:
             self.add_widget(CandidateLine(num))

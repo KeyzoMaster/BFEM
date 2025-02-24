@@ -21,7 +21,9 @@ class BrevetDB:
                    * (.5 * (num_table + anonymat) * (num_table + anonymat + 1) + anonymat + i + 1) + i)
 
     def ajouter_jury(self, ia, ief, localite, centre, president, tel):
-        pass
+        self.cursor.execute("""INSERT INTO Jury(ia,ief,localite,centre_examen,president_jury,telephone) VALUES(
+        ?,?,?,?,?,?);""", (ia, ief, localite, centre, president, tel))
+        self.conn.commit()
 
     def correction_copie(self, anonymat_copie, note):
         self.cursor.execute("""UPDATE Copie SET note_copie = ? WHERE anonymat_copie = ?""", (note, anonymat_copie))
