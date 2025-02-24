@@ -1,6 +1,5 @@
 import re
-
-from kivy.properties import StringProperty, ObjectProperty
+from kivy.properties import StringProperty
 from kivy.uix.boxlayout import BoxLayout
 
 
@@ -38,11 +37,10 @@ class BirthBox(BoxLayout):
 
 
 class SexBox(BoxLayout):
-    sex = StringProperty()
+    sex = StringProperty("M")
 
     def set_sex(self, value):
         self.sex = value
-        print(self.sex)
 
 
 class NationalityAndSchoolBox(BoxLayout):
@@ -63,42 +61,51 @@ class NationalityAndSchoolBox(BoxLayout):
 
 
 class OptionalTestBox(BoxLayout):
-    option = ObjectProperty()
+    option = StringProperty("NEUTRE")
 
-    def option_value(self, option):
+    def set_option(self, option):
         self.option = option
-        print(self.option)
+
+    def value(self):
+        return self.option
 
 
 class AbilityBox(BoxLayout):
-    aptitude = StringProperty()
+    aptitude = StringProperty("APTE")
 
-    def aptitude_value(self, aptitude):
+    def set_aptitude(self, aptitude):
         self.aptitude = aptitude
-        print(aptitude)
 
 
 class CandidateTypeBox(BoxLayout):
-    def value(self, officiel_radio):
-        return "OFFICIEL" if officiel_radio.active else "INDIVIDUEL"
+    type_candidat = StringProperty("OFFICIEL")
+
+    def set_type(self, type):
+        self.type_candidat = type
 
 
 class AttemptAndAvgBox(BoxLayout):
-    def validation(self, attempts, moy_6e, moy_5e, moy_4e, moy_3e, type_candidat):
+    attempts = StringProperty()
+    moy_6e = StringProperty()
+    moy_5e = StringProperty()
+    moy_4e = StringProperty()
+    moy_3e = StringProperty()
+
+    def validation(self, type_candidat):
         motif_attempts = r"^(10|[0-9])$"
         motif_avg = r"^(20(\.0{1,2})?|1?\d(\.\d{1,2})?)$"
-        if re.match(motif_attempts, attempts):
-            if (type_candidat == "OFFICIEL" and re.match(motif_avg, moy_6e) and re.match(motif_avg, moy_5e)
-                    and re.match(motif_avg, moy_4e) and re.match(motif_avg, moy_3e)):
-                return attempts, moy_6e, moy_5e, moy_4e, moy_3e
+        if re.match(motif_attempts, self.attempts):
+            if (type_candidat == "OFFICIEL" and re.match(motif_avg, self.moy_6e) and re.match(motif_avg, self.moy_5e)
+                    and re.match(motif_avg, self.moy_4e) and re.match(motif_avg, self.moy_3e)):
+                return self.attempts, self.moy_6e, self.moy_5e, self.moy_4e, self.moy_3e
             else:
-                return attempts, None, None, None, None
+                return self.attempts, None, None, None, None
         else:
             return False
 
-    def clear_fields(self, attempts, moy_6e, moy_5e, moy_4e, moy_3e):
-        attempts.text = ""
-        moy_6e.text = ""
-        moy_5e.text = ""
-        moy_4e.text = ""
-        moy_3e.text = ""
+    def clear_fields(self):
+        self.attempts = ""
+        self.moy_6e = ""
+        self.moy_5e = ""
+        self.moy_4e = ""
+        self.moy_3e = ""

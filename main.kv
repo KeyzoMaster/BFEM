@@ -126,8 +126,9 @@ WindowManager:
     height: "45dp"
     Label:
         text: root.label
-    Label:
+    TextInput:
         text: root.value
+        disabled: True
 # -------------------------------------------Form----------------------------------------------------
 <FullNameBox>:
     size_hint_y: None
@@ -139,12 +140,14 @@ WindowManager:
         size_hint_y: None
         height: "30dp"
         multiline: False
+        on_text: root.first_name = self.text
     Label:
         text: "Nom:"
     TextInput:
         size_hint_y: None
         height: "30dp"
         multiline: False
+        on_text: root.last_name = self.text
 
 <SexBox>:
     size_hint_y: None
@@ -182,56 +185,105 @@ WindowManager:
         text: "Nationalité:"
     TextInput:
         multiline: False
+        hint_text: "SEN"
         on_text: root.nationality = self.text
     Label:
-        text: "Lieu de naissance:"
+        text: "Etablissement:"
     TextInput:
         multiline: False
         on_text: root.school = self.text
 
 <OptionalTestBox>:
-        Label:
-            text: "Neutre"
-        CheckBox:
-            group: "optional"
-            active: True
-            on_active: root.option_value(None)
-        Label:
-            text: "Dessin"
-        CheckBox:
-            group: "optional"
-            on_active: root.option_value("DESSIN")
-        Label:
-            text: "Couture"
-        CheckBox:
-            group: "optional"
-            on_active: root.option_value("COUTURE")
-        Label:
-            text: "Musique"
-        CheckBox:
-            group: "optional"
-            on_active: root.option_value("MUSIQUE")
+    size_hint_y: None
+    height: "30dp"
+    Label:
+        text: "Neutre"
+    CheckBox:
+        group: "optional"
+        active: True
+        on_active: root.set_option("NEUTRE")
+    Label:
+        text: "Dessin"
+    CheckBox:
+        group: "optional"
+        on_active: root.set_option("DESSIN")
+    Label:
+        text: "Couture"
+    CheckBox:
+        group: "optional"
+        on_active: root.set_option("COUTURE")
+    Label:
+        text: "Musique"
+    CheckBox:
+        group: "optional"
+        on_active: root.set_option("MUSIQUE")
 
 <AbilityBox>:
+    size_hint_y: None
+    height: "30dp"
     Label:
         text: "Apte"
     CheckBox:
         group: "aptitude"
         active: True
-        on_active: root.aptitude_value("APTE")
+        on_active: root.set_aptitude("APTE")
     Label:
         text: "Inapte"
     CheckBox:
         group: "aptitude"
-        on_active: root.aptitude_value("INAPTE")
+        on_active: root.set_aptitude("INAPTE")
 
 <CandidateTypeBox>:
+    size_hint_y: None
+    height: "30dp"
+    Label:
+        text: "Officiel"
+    CheckBox:
+        group: "type"
+        active: True
+        on_active: root.set_type("OFFICIEL")
+    Label:
+        text: "Individiuel"
+    CheckBox:
+        group: "type"
+        on_active: root.set_type("INDIVIDUEL")
 
 
 <AttemptAndAvgBox>:
+    size_hint_y: None
+    height: "30dp"
+    Label:
+        text: "Nombre de tentatives:"
+        size_hint_x: .4
+    TextInput:
+        multiline: False
+        size_hint_x: .1
+        on_text: root.attempts = self.text
+    Label:
+        text: "Moyennes"
+    TextInput:
+        hint_text: "6e"
+        size_hint_x: .125
+        multiline: False
+        on_text: root.moy_6e = self.text
+    TextInput:
+        hint_text: "5e"
+        size_hint_x: .125
+        multiline: False
+        on_text: root.moy_5e = self.text
+    TextInput:
+        hint_text: "4e"
+        size_hint_x: .125
+        multiline: False
+        on_text: root.moy_4e = self.text
+    TextInput:
+        hint_text: "3e"
+        size_hint_x: .125
+        multiline: False
+        on_text: root.moy_3e = self.text
 
 
-<FormScreen@Screen>:
+<FormScreen>:
     name: "form"
     id: cand_form
     BoxLayout:
@@ -249,114 +301,37 @@ WindowManager:
                 font_size: "40dp"
                 height: "40dp"
             FullNameBox:
+                id: full_name
                 size_hint_y: None
                 height: self.height
             SexBox:
+                id: sex
                 size_hint_y: None
                 height: self.height
             BirthBox:
+                id: birth
                 size_hint_y: None
                 height: self.height
             NationalityAndSchoolBox:
+                id: nat
                 size_hint_y: None
                 height: self.height
             OptionalTestBox:
+                id: option
+                size_hint_y: None
+                height: self.height
+            CandidateTypeBox:
+                id: type_cand
                 size_hint_y: None
                 height: self.height
             AbilityBox:
+                id: ability
                 size_hint_y: None
                 height: self.height
-            GridLayout:
-                cols: 2
-                size_hint: 1, None
-                pos_hint: {"x": 0}
-                height: "30"
-                Label:
-                    text: "Nombre de fois"
-                TextInput:
-                    size_hint: None, 1
-                    width: "50dp"
-                    multiline: False
-            BoxLayout:
-                size_hint: 1, None
-                height: "30dp"
-                Label:
-                    text: "Type de candidat"
-                CheckBox:
-                    group: "type"
-                Label:
-                    text: "Officiel"
-                CheckBox:
-                    group: "type"
-                Label:
-                    text: "Individuel"
-            GridLayout:
-                cols: 2
-                spacing: "10dp"
-                size_hint: 1, None
-                height: "30"
-                BoxLayout:
-                    Label:
-                        text: "Epreuve facultative"
-                    CheckBox:
-                        group: "opt_choice"
-                    Label:
-                        text: "Oui"
-                    CheckBox:
-                        group: "opt_choice"
-                    Label:
-                        text: "Non"
-                BoxLayout:
-                    Label:
-                        text: "Aptitude sportive"
-                    CheckBox:
-                        group: "sport"
-                    Label:
-                        text: "Oui"
-                    CheckBox:
-                        group: "sport"
-                    Label:
-                        text: "Non"
-            GridLayout:
-                cols: 2
-                spacing: "10dp"
-                size_hint: 1, None
-                height: "30"
-                BoxLayout:
-                    Label:
-                        text: "Nombre de fois"
-                    TextInput:
-                        multiline: False
-                BoxLayout:
-                    Label:
-                        text: "Choix épreuve facultative"
-                    TextInput:
-                        multiline: False
-            GridLayout:
-                cols: 5
-                spacing: "10dp"
-                size_hint: 1, None
-                height: "30dp"
-                Label:
-                    text: "Moyennes"
-                    size_hint: 0.2, 1
-                    pos_hint: {"x":0}
-                TextInput:
-                    text: "6e"
-                    size_hint: .2, 1
-                    multiline: False
-                TextInput:
-                    text: "5e"
-                    size_hint: .2, 1
-                    multiline: False
-                TextInput:
-                    text: "4e"
-                    size_hint: .2, 1
-                    multiline: False
-                TextInput:
-                    text: "3e"
-                    size_hint: .2, 1
-                    multiline: False
+            AttemptAndAvgBox:
+                id: attempt
+                size_hint_y: None
+                height: self.height
         BoxLayout:
             size_hint: 1, None
             pos_hint : {"y": 0}
@@ -365,10 +340,17 @@ WindowManager:
             Button:
                 text: "Réinitialiser"
                 on_release:
+                    full_name.clear_fields()
+                    birth.clear_fields()
+                    nat.clear_fields()
+                    attempt.clear_fields()
             Button:
                 text: "Soumettre"
                 on_release:
-                    app.root.current="candidate"
+                    cand_form.on_submit(full_name.validation(), sex.sex, birth.validation(), nat.validation(), option.option,
+                    type_cand.type_candidat, ability.aptitude, attempt.validation(type_cand.type_candidat))
+                    app.root.get_screen("candidate").refresh() if cand_form.is_valid else None
+                    app.root.current="candidate" if cand_form.is_valid else "form"
                     root.manager.transition.direction = "right"
 
 <CandidateScreen>:
@@ -381,19 +363,19 @@ WindowManager:
             size_hint: 1, None
             height: "30"
             Label:
-                size_hint: 0.1, 1
+                size_hint: .1, 1
                 text: "Numero"
             Label:
-                size_hint: 0.4, 1
+                size_hint: .3, 1
                 text: "Prénom(s)"
             Label:
-                size_hint: 0.2, 1
+                size_hint: .3, 1
                 text: "Nom"
             Label:
-                size_hint: 0.2, 1
+                size_hint: .2, 1
                 text: "Statut"
             Label:
-                size_hint: 0.1, 1
+                size_hint: .1, 1
         ScrollView:
             CandidatesStack:
                 size_hint: 1, None
@@ -421,32 +403,27 @@ WindowManager:
                     root.manager.transition.direction = "left"
 
 # --------------------Correction--------------------------------------------------------------------------
-<CorrectionTabPanel>
-    do_default_tab: False
+
+<CorrectionLine>:
+    size_hint_y: None
+    height: "30dp"
+    Label:
+        text: root.anonymat
+        size_hint_y: None
+        height: "30dp"
+    TextInput:
+        multiline: False
+        size_hint_y: None
+        height: "30dp"
+        on_text: root.note = self.text
+
 
 <CorrectionScreen>:
     name: "correction"
     BoxLayout:
         orientation: "vertical"
-        Label:
-            text: "Work in progress"
-        Button:
-            text: "Go Back"
-            on_release:
-                app.root.get_screen("candidate").refresh()
-                app.root.current = "candidate"
-                root.manager.transition.direction = "right"
-
-#---------------------Deliberation------------------------------------------------------------------------
-
-<DeliberationScreen>:
-    name: "deliberation"
-    orientation: "vertical"
-    BoxLayout:
-        GridLayout:
-            cols: 3
+        CorrectionTabPanel:
             size_hint_y: .9
-            text: "Work in progress"
         Button:
             size_hint_y: .1
             text: "Go Back"
@@ -454,6 +431,60 @@ WindowManager:
                 app.root.get_screen("candidate").refresh()
                 app.root.current = "candidate"
                 root.manager.transition.direction = "right"
+
+#---------------------Deliberation------------------------------------------------------------------------
+<DeliberationTabHeader@BoxLayout>:
+    size_hint_y: None
+    height: "30dp"
+    Label:
+        text: "No"
+        size_hint_x: .1
+        bold: True
+    Label:
+        text: "PRENOM(S)"
+        size_hint_x: .2
+        bold: True
+    Label:
+        text: "NOM"
+        size_hint_x: .2
+        bold: True
+    Label:
+        text: "SEXE"
+        size_hint_x: .2
+        bold: True
+    Label:
+        text: "ETABLISSEMENT"
+        size_hint_x: .2
+        bold: True
+    Label:
+        text: "RANG"
+        size_hint_x: .1
+        bold: True
+
+<DeliberationTabItem>
+
+
+<DeliberationScreen>:
+    name: "deliberation"
+    orientation: "vertical"
+    BoxLayout:
+        DeliberationTabPanel:
+        BoxLayout:
+            Button:
+                size_hint_y: None
+                height: "40dp"
+                pos_hint: {"x":0}
+                text: "Imprimer le PV"
+                on_release:
+            Button:
+                size_hint_y: None
+                height: "40dp"
+                pos_hint: {"x":0}
+                text: "Retour"
+                on_release:
+                    app.root.get_screen("candidate").refresh()
+                    app.root.current = "candidate"
+                    root.manager.transition.direction = "right"
 
 # --------------------Statistics--------------------------------------------------------------------------
 

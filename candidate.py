@@ -46,10 +46,8 @@ class PersonalDetails(TabbedPanelItem):
     def __init__(self, num, **kwargs):
         super().__init__(**kwargs)
         self.text = "Informations personnelles"
-        self.content = GridLayout(cols=2, spacing=dp(15))
-        self.details = {"num": num, "first_name": "First Name", "last_name": "Name", "birth_date": "01/01/2000",
-                        "birth_place": "Dakar", "sex": "M", "nationality": "senegalese", "optional_test_choice": True,
-                        "optional_test": "Drawing", "can_do_sport": True, "status": "---"}
+        self.content = BoxLayout(orientation="vertical", spacing=dp(15))
+        self.details = BrevetDB().personal_information_candidat(num)
         for k, v in self.details.items():
             self.content.add_widget(DetailsLine(label=str(k), value=str(v)))
 
@@ -63,10 +61,8 @@ class NotesDetails(TabbedPanelItem):
         self.width = self.texture_size[0]
         self.padding = (10, 0)
         self.size_hint_x = None
-        self.content = GridLayout(cols=2, spacing=dp(15))
-        self.details = {"num": num, "first_name": "First Name", "last_name": "Name", "birth_date": "01/01/2000",
-                        "birth_place": "Dakar", "sex": "M", "nationality": "senegalese", "optional_test_choice": True,
-                        "optional_test": "Drawing", "can_do_sport": True, "status": "---"}
+        self.content = BoxLayout(orientation="vertical", spacing=dp(15))
+        self.details = BrevetDB().personal_information_candidat(num)
         for k, v in self.details.items():
             self.content.add_widget(DetailsLine(label=str(k), value=str(v)))
 
