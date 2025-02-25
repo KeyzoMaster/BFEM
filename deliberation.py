@@ -6,7 +6,7 @@ from kivy.uix.tabbedpanel import TabbedPanelItem, TabbedPanel
 class DeliberationTabPanel(TabbedPanel):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.default_tab = False
+        self.do_default_tab = False
         self.add_widget(DeliberationTabItem("Premier Tour"))
         self.add_widget(DeliberationTabItem("Second Tour"))
 
@@ -27,9 +27,8 @@ class DeliberationLine(BoxLayout):
         super().__init__(**kwargs)
 
 
-
 class DeliberationStack(StackLayout):
     def __init__(self, tour, **kwargs):
         super().__init__(**kwargs)
-        self.add_widget(DeliberationTabHeader)
+        self.add_widget(DeliberationTabHeader())
 

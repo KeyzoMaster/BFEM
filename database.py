@@ -14,6 +14,10 @@ class BrevetDB:
     def generateur_anonymat_principal(self, num_table):
         return int((2 * num_table) * (2 * num_table + 1) / 2)
 
+    def a_deja_copies(self, num, tour="PREMIER TOUR"):
+        ano = self.generateur_anonymat_principal(num)
+        return self.cursor.execute("SELECT * FROM Note WHERE anonymat = ? AND tour = ?", (ano, tour)).fetchall()
+
     def generateur_anonymat_copie(self, num_table, anonymat, i):
         anonymat = 100 / anonymat
         num_table = 100 / num_table
@@ -34,7 +38,7 @@ class BrevetDB:
         matieres = self.matieres_a_faire(tour=tour)
         for matiere in matieres:
             temp = self.cursor.execute("""SELECT Copie.anonymat_copie FROM Note
-                     INNER JOIN Copie ON Copie.anonymat_copie=Note.anonymat_copie WHERE Copie.note_copie
+                     INNER JOIN Copie ON Copie.anonymat_copie=Note.anonymat_copie WHERE note_copie
                      IS NULL and nom_matiere = ?;""", (matiere,)).fetchall()
             copies = []
             for num in temp:
@@ -113,10 +117,6 @@ class BrevetDB:
                             (ano_princ, ano_copie, tour))
         self.conn.commit()
 
-    def est_matiere_corrigee(self, matiere):
-        return self.cursor.execute("SELECT * FROM Copie WHERE nom_matiere = ? AND note_copie IS NULL;",
-                                   (matiere,)).fetchone() is None
-
     def matieres_a_faire(self, num=None, tour="PREMIER TOUR"):
         matieres = []
         if tour == "PREMIER TOUR":
@@ -135,8 +135,9 @@ class BrevetDB:
         return matieres
 
     def ajouter_toutes_copies_et_notes(self, num, matieres, tour="PREMIER TOUR", note=None):
-        for mat in matieres:
-            self.ajouter_copie_et_note(num, mat, tour, note)
+        if not self.a_deja_copies(num, tour):
+            for mat in matieres:
+                self.ajouter_copie_et_note(num, mat, tour, note)
 
     def ajouter_livret(self, nb_tentatives, moy_6e, moy_5e, moy_4e, moy_3e):
         if moy_6e and moy_5e and moy_4e and moy_3e:
@@ -237,19 +238,14 @@ class BrevetDB:
         liste_num = self.liste_num()
         resultats = []
         for num in liste_num:
-            infos = [num]
             points = self.calcul_points_premier_tour(num)
-            infos.append(points)
-            print(str(num) + ":" + str(points))
             if points >= 180 or (self.est_repechable(num) and 171 <= points < 180):
-                infos.append("admis")
+                resultats.append([num, points, "admis"])
             elif points >= 153 or (self.est_repechable(num) and 144 <= points < 153):
-                infos.append("autorise_second_tour")
+                resultats.append([num, points, "autorise_second_tour"])
                 self.ajouter_toutes_copies_et_notes(num, self.matieres_a_faire(tour="SECOND TOUR"), "SECOND TOUR")
-            resultats.append(infos)
-        resultats.sort(key=lambda x: x[1])
-        print(resultats)
-        return []
+        resultats.sort(key=lambda x: x[1], reverse=True)
+        return resultats
 
     def resultats_second_tour(self):
         resultat_premier_tour = self.resultats_premier_tour()
@@ -264,10 +260,11 @@ class BrevetDB:
         return resultats
 
     def resultats(self, tour="PREMIER TOUR"):
-        if tour == "PREMIER TOUR":
-            return self.resultats_premier_tour()
-        else:
-            return self.resultats_second_tour()
+        if not self.liste_copies_non_notees():
+            if tour == "PREMIER TOUR":
+                return self.resultats_premier_tour()
+            else:
+                return self.resultats_second_tour()
 
     def fill_db(self, xslx_file_path):
         df = pd.read_excel(xslx_file_path, sheet_name="Feuille 1")
@@ -411,4 +408,4 @@ class BrevetDB:
         self.commit_and_close()
 
 
-BrevetDB().resultats_premier_tour()
+print(BrevetDB().fill_db("BD_BFEM.xlsx"))

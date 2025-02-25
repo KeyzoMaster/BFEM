@@ -99,9 +99,6 @@ WindowManager:
     spacing: "5dp"
     Label:
         text: str(root.num)
-        halign: "left"
-        on_size: self.text_size = self.size
-        pos_hint: {"x":0}
     Label:
         text: root.first_name
         halign: "left"
@@ -363,19 +360,19 @@ WindowManager:
             size_hint: 1, None
             height: "30"
             Label:
-                size_hint: .1, 1
+                size_hint: .15, 1
                 text: "Numero"
             Label:
-                size_hint: .3, 1
+                size_hint: .15, 1
                 text: "Prénom(s)"
             Label:
-                size_hint: .3, 1
+                size_hint: .2, 1
                 text: "Nom"
             Label:
-                size_hint: .2, 1
+                size_hint: .1, 1
                 text: "Statut"
             Label:
-                size_hint: .1, 1
+                size_hint: .4, 1
         ScrollView:
             CandidatesStack:
                 size_hint: 1, None
@@ -433,7 +430,7 @@ WindowManager:
                 root.manager.transition.direction = "right"
 
 #---------------------Deliberation------------------------------------------------------------------------
-<DeliberationTabHeader@BoxLayout>:
+<DeliberationTabHeader>:
     size_hint_y: None
     height: "30dp"
     Label:
@@ -461,13 +458,11 @@ WindowManager:
         size_hint_x: .1
         bold: True
 
-<DeliberationTabItem>
-
 
 <DeliberationScreen>:
     name: "deliberation"
-    orientation: "vertical"
     BoxLayout:
+        orientation: "vertical"
         DeliberationTabPanel:
         BoxLayout:
             Button:

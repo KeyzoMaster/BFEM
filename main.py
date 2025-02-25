@@ -7,6 +7,8 @@ from correction import *
 import candidate
 import statistiques
 import impress
+import deliberation
+
 from database import BrevetDB
 from form import *
 
@@ -44,7 +46,6 @@ class FormScreen(Screen):
     def on_submit(self, name_widget, sex_widget, birth_widget, nat_widget, opt_widget, type_widget, ability_widget,
                   attempts_widget):
         if name_widget and birth_widget and nat_widget and attempts_widget:
-            print("Valid Form")
             (first_name, last_name) = name_widget
             sex = sex_widget
             (birth_date, birth_place) = birth_widget
