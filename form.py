@@ -14,10 +14,6 @@ class FullNameBox(BoxLayout):
         else:
             return False
 
-    def clear_fields(self):
-        self.first_name = ""
-        self.last_name = ""
-
 
 class BirthBox(BoxLayout):
     birth_date = StringProperty()
@@ -30,10 +26,6 @@ class BirthBox(BoxLayout):
             return self.birth_date, self.birth_place
         else:
             return False
-
-    def clear_fields(self):
-        self.birth_date = ""
-        self.birth_place = ""
 
 
 class SexBox(BoxLayout):
@@ -54,10 +46,6 @@ class NationalityAndSchoolBox(BoxLayout):
             return self.nationality, self.school
         else:
             return False
-
-    def clear_fields(self):
-        self.nationality = ""
-        self.school = ""
 
 
 class OptionalTestBox(BoxLayout):
@@ -102,10 +90,3 @@ class AttemptAndAvgBox(BoxLayout):
                 return self.attempts, None, None, None, None
         else:
             return False
-
-    def clear_fields(self):
-        self.attempts = ""
-        self.moy_6e = ""
-        self.moy_5e = ""
-        self.moy_4e = ""
-        self.moy_3e = ""

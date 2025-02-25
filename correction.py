@@ -29,12 +29,12 @@ class CorrectionLine(BoxLayout):
 
     def correct(self):
         if self.is_valid():
-            BrevetDB().correction_copie(self.anonymat, float(self.note))
+            BrevetDB().correction_copie(int(self.anonymat), float(self.note))
 
 
 class CorrectionTabItem(TabbedPanelItem):
     def __init__(self, tour, **kwargs):
-        super().__init__()
+        super().__init__(**kwargs)
         self.text = tour
         self.add_widget(CorrectionBox(tour.upper()))
 
@@ -64,6 +64,7 @@ class CorrectionBox(StackLayout):
 class CorrectionPopup(Popup):
     def __init__(self, liste_copies, parent_box, **kwargs):
         super().__init__(**kwargs)
+        print("Success")
         self.parent_box = parent_box
         self.title = "Correction"
         self.liste_copies = liste_copies
@@ -79,16 +80,12 @@ class CorrectionPopup(Popup):
         self.button.on_release = self.correction
         self.button_container.add_widget(self.button)
         self.button_container.add_widget(Button(size_hint_y=None, height=dp(40), pos_hint={"x": 0}, text="Quitter",
-                                           on_release=self.dismiss))
+                                                on_release=self.dismiss))
         container.add_widget(self.scroll_view)
         container.add_widget(self.button_container)
         self.content = container
 
     def correction(self):
-        for line in self.corr_box.children:
-            if not line.is_valid():
-                return
-
         for line in self.corr_box.children:
             line.correct()
         self.parent_box.reset()

@@ -1,9 +1,8 @@
 from kivy.app import App
-from kivy.properties import StringProperty, BooleanProperty
-from kivy.uix.boxlayout import BoxLayout
+from kivy.properties import BooleanProperty
 from kivy.uix.screenmanager import ScreenManager, Screen
 from kivy.factory import Factory
-from correction import *
+import correction
 import candidate
 import statistiques
 import impress
@@ -33,7 +32,6 @@ class CandidateScreen(Screen):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.my_text = "Deliberation" if not BrevetDB().liste_copies_non_notees(self.tour) else "Correction"
 
     def refresh(self, tour="PREMIER TOUR"):
         self.tour = tour
@@ -43,6 +41,7 @@ class CandidateScreen(Screen):
 
 class FormScreen(Screen):
     is_valid = BooleanProperty()
+
     def on_submit(self, name_widget, sex_widget, birth_widget, nat_widget, opt_widget, type_widget, ability_widget,
                   attempts_widget):
         if name_widget and birth_widget and nat_widget and attempts_widget:
@@ -64,18 +63,36 @@ class FormScreen(Screen):
         else:
             self.is_valid = False
 
+    def refresh(self):
+        self.clear_widgets()
+        self.__init__()
+
 
 class CorrectionScreen(Screen):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
+    def refresh(self):
+        self.clear_widgets()
+        self.__init__()
+
 
 class DeliberationScreen(Screen):
-    pass
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+
+    def refresh(self):
+        self.clear_widgets()
+        self.__init__()
 
 
 class StatistiquesScreen(Screen):
-    pass
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+
+    def refresh(self):
+        self.clear_widgets()
+        self.__init__()
 
 
 class MainApp(App):

@@ -60,11 +60,6 @@ class BrevetDB:
         self.conn.commit()
         return choix == "OUI"
 
-    def complete_information_liste(self):
-        infos = self.cursor.execute('SELECT * FROM Candidat').fetchall()
-        self.conn.commit()
-        return infos
-
     def liste_num(self):
         infos = self.cursor.execute('SELECT num_table FROM Candidat').fetchall()
         self.conn.commit()
@@ -76,18 +71,27 @@ class BrevetDB:
     def basic_information_candidat(self, num):
         infos = self.cursor.execute('SELECT prenom_s, nom, type_candidat FROM Candidat WHERE num_table = ?',
                                     (num,)).fetchall()
-        self.commit_and_close()
+        self.conn.commit()
         return infos[0]
 
+    def notes_information_candidat(self, num):
+        matieres = self.liste_matieres_faites(num=num)
+        notes_dic = {}
+        for mat in matieres:
+            notes_dic[mat] = str(self.nb_points(num, mat, with_coef=False))
+        matieres = self.liste_matieres_faites(num, tour="SECOND TOUR")
+        for mat in matieres:
+            notes_dic[mat] = str(self.nb_points(num, mat, with_coef=False))
+        return notes_dic
+
     def personal_information_candidat(self, num):
-        personal_infos_dict = {"Numéro de table": "", "Prénom(s)": "", "Nom": "", "Date de naissaince": "",
-                               "Lieu de naissance": "", "Nationalité": "", "Etablissement": "",
+        personal_infos_dict = {"Numéro de table": "", "Prénom(s)": "", "Nom": "", "Date de naissance": "",
+                               "Lieu de naissance": "", "Sexe": "", "Nationalité": "", "Etablissement": "",
                                "Epreuve Facultative": "",
-                               "Aptitude sportive": "", "Type de candidat": "", "Anonymat": "", "ID Livret": ""}
-        infos = self.cursor.execute("""SELECT num_table,prenom_s,nom, date_naissance,lieu_naissance, sexe,
-         nationalite, etablissement, epreuve_facultative, aptitude_sportive, type_candidat,
-         anonymat, id_livret FROM Candidat WHERE num_table = ?;""", (num,)).fetchone()
-        self.commit_and_close()
+                               "Aptitude sportive": "", "Type de candidat": "", "ID Livret": "", "Anonymat": "", }
+        infos = self.cursor.execute("""SELECT num_table,prenom_s, nom, date_naissance,lieu_naissance, sexe,
+         nationalite, etablissement, epreuve_facultative, aptitude_sportive, type_candidat,id_livret,
+         anonymat FROM Candidat WHERE num_table = ?;""", (num,)).fetchone()
 
         i = 0
         for k in personal_infos_dict.keys():
@@ -101,7 +105,8 @@ class BrevetDB:
         personal_infos_dict["Moyenne 4e"] = str(infos[3])
         personal_infos_dict["Moyenne 3e"] = str(infos[4])
         personal_infos_dict["Moyenne du cycle"] = str(infos[5])
-
+        personal_infos_dict["Statut"] = ""
+        self.conn.commit()
         return personal_infos_dict
 
     def nb_notes(self):
@@ -156,6 +161,18 @@ class BrevetDB:
         moy_cycle = (moy_6e + moy_5e + moy_4e + moy_3e) / 4
         self.cursor.execute("""UPDATE Livret SET nombre_tentatives=?, moy_6e=?, moy_5e=?, moy_4e=?, moy_3e=?,
         moy_cycle=? WHERE id_livret=?;""", (nb_tentatives, moy_6e, moy_5e, moy_4e, moy_3e, moy_cycle, id_livret))
+        self.conn.commit()
+
+    def modifier_candidat(self, prenom, nom, dn, ln, sexe, nat, eta, opt, apt, type, nb, m6, m5, m4, m3, id, num):
+        self.cursor.execute("""UPDATE Candidat SET prenom_s = ?, nom = ?, date_naissance ?, lieu_naissance = ?, 
+                                    sexe = ?,nationalite = ?, etablissement = ?, choix_epreuve_facultative = ?, 
+                                    epreuve_facultative = ?, aptitude_Sportive = ?, 
+                                    type_candidat = ? WHERE num_table = ?""", (prenom, nom, dn, ln, sexe,
+                                                                               nat, eta,
+                                                                               "OUI" if opt is not None else "NON",
+                                                                               None if opt is None else opt,
+                                                                               apt, type, int(num)))
+        self.modifier_livret(int(id), nb, m6, m5, m4, m3)
 
     def supprimer_candidat(self, num):
         (anonymat, id_livret) = self.cursor.execute("SELECT anonymat, id_livret FROM Candidat WHERE num_table=?;",
@@ -196,7 +213,7 @@ class BrevetDB:
     def liste_matieres_faites(self, num, tour="PREMIER TOUR"):
         temp = self.cursor.execute("""SELECT nom_matiere FROM Copie INNER JOIN Note ON Copie.anonymat_copie=
                 Note.anonymat_copie INNER JOIN Candidat on Note.anonymat=Candidat.anonymat WHERE num_table=
-                ? AND tour = ?;""", (num, tour)).fetchall()
+                ? AND tour = ? AND note_copie IS NOT NULL;""", (num, tour)).fetchall()
         self.conn.commit()
         liste = []
         for m in temp:
@@ -207,9 +224,9 @@ class BrevetDB:
         temp = self.cursor.execute("""SELECT note_copie, coef_matiere FROM Matiere INNER JOIN Copie ON Matiere.nom_matiere=
         Copie.nom_matiere INNER JOIN Note ON Copie.anonymat_copie=
         Note.anonymat_copie INNER JOIN Candidat on Note.anonymat=Candidat.anonymat WHERE num_table=? AND Copie.nom_matiere 
-        = ?;""", (num, matiere)).fetchone()
+        = ? AND note_copie IS NOT NULL;""", (num, matiere)).fetchone()
         self.conn.commit()
-        return float(temp[0]) * (int(temp[1]) if with_coef else 1)
+        return float(temp[0]) * (int(temp[1])) if with_coef else float(temp[0])
 
     def calcul_points_premier_tour(self, num):
         liste_mat = self.liste_matieres_faites(num)
@@ -240,27 +257,41 @@ class BrevetDB:
         for num in liste_num:
             points = self.calcul_points_premier_tour(num)
             if points >= 180 or (self.est_repechable(num) and 171 <= points < 180):
-                resultats.append([num, points, "admis"])
+                resultats.append([num, points, "Admis(e)"])
             elif points >= 153 or (self.est_repechable(num) and 144 <= points < 153):
-                resultats.append([num, points, "autorise_second_tour"])
+                resultats.append([num, points, "Autorise(e) au second tour"])
                 self.ajouter_toutes_copies_et_notes(num, self.matieres_a_faire(tour="SECOND TOUR"), "SECOND TOUR")
         resultats.sort(key=lambda x: x[1], reverse=True)
-        return resultats
+        full_results = []
+        for n in resultats:
+            r = self.personal_information_candidat(n[0])
+            r["Statut"] = n[-1]
+            full_results.append(r)
+        return full_results
 
     def resultats_second_tour(self):
         resultat_premier_tour = self.resultats_premier_tour()
-        liste_num = self.liste_num()
-        resultats = {}
-        points = 0
+        liste_num = []
+        for e in resultat_premier_tour:
+            if e["Statut"] == "Autorise(e) au second tour":
+                liste_num.append(e["Numéro de table"])
+        resultats = []
+
         for num in liste_num:
-            if resultat_premier_tour[num] == "autorise_second_tour":
-                points += self.calcul_points_second_tour(num)
-                if points >= 80 or (self.est_repechable(num) and 76 <= points < 80):
-                    resultats[num] = "admis"
-        return resultats
+            points = self.calcul_points_second_tour(num)
+            if points >= 80 or (self.est_repechable(num) and 76 <= points < 80):
+                resultats.append([num, points, "Admis(e)"])
+        resultats.sort(key=lambda x: x[1], reverse=True)
+
+        full_results = []
+        for n in resultats:
+            r = self.personal_information_candidat(n[0])
+            r["Statut"] = n[-1]
+            full_results.append(r)
+        return full_results
 
     def resultats(self, tour="PREMIER TOUR"):
-        if not self.liste_copies_non_notees():
+        if not self.liste_copies_non_notees(tour=tour):
             if tour == "PREMIER TOUR":
                 return self.resultats_premier_tour()
             else:
@@ -406,6 +437,3 @@ class BrevetDB:
                 if float(row[k]) >= 0:
                     self.ajouter_copie_et_note(int(row["N° de table"]), v, "PREMIER TOUR", note=float(row[k]))
         self.commit_and_close()
-
-
-print(BrevetDB().fill_db("BD_BFEM.xlsx"))

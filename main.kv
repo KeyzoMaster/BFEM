@@ -15,7 +15,7 @@ WindowManager:
     GridLayout:
         canvas:
             Color:
-                rgba: 0.7, 0.45, 0.52, .7
+                rgba: 0.4, 0.45, 0.52, .7
             Rectangle:
                 size: root.size
         cols: 1
@@ -87,7 +87,7 @@ WindowManager:
                 height: "50dp"
                 text: "Se connecter"
                 on_release:
-                    # BrevetDB().ajouter_jury(ia.text, ief.text, localite.text, centre.text, president.text, tel.text )
+                    BrevetDB().ajouter_jury(ia.text, ief.text, localite.text, centre.text, president.text, tel.text)
                     app.root.current="candidate"
 
 
@@ -95,7 +95,7 @@ WindowManager:
 
 <CandidateLine>
     size_hint: 1, None
-    height: 45
+    height: 30
     spacing: "5dp"
     Label:
         text: str(root.num)
@@ -125,7 +125,8 @@ WindowManager:
         text: root.label
     TextInput:
         text: root.value
-        disabled: True
+        on_text: root.value = self.text
+        disabled: root.inactive
 # -------------------------------------------Form----------------------------------------------------
 <FullNameBox>:
     size_hint_y: None
@@ -335,12 +336,14 @@ WindowManager:
             spacing: "10dp"
             height: "40dp"
             Button:
-                text: "Réinitialiser"
+                text: "Retour"
                 on_release:
-                    full_name.clear_fields()
-                    birth.clear_fields()
-                    nat.clear_fields()
-                    attempt.clear_fields()
+                    app.root.get_screen("candidate").refresh()
+                    app.root.current="candidate"
+                    root.manager.transition.direction = "right"
+            Button:
+                text: "Réinitialiser"
+                on_release: app.root.get_screen("form").refresh()
             Button:
                 text: "Soumettre"
                 on_release:
@@ -358,7 +361,7 @@ WindowManager:
         spacing: "15dp"
         BoxLayout:
             size_hint: 1, None
-            height: "30"
+            height: 30
             Label:
                 size_hint: .15, 1
                 text: "Numero"
@@ -382,20 +385,29 @@ WindowManager:
             height: "40dp"
             Button:
                 text: "Imprimer liste des candidats"
-                on_release:
+                on_release: ImpressBFEM().liste_candidats()
             Button:
                 text: "Ajouter un candidat"
                 on_release:
+                    app.root.get_screen("form").refresh()
                     app.root.current = "form"
                     root.manager.transition.direction = "left"
             Button:
-                text: cand_screen.my_text
+                text:"Correction"
                 on_release:
-                    app.root.current = cand_screen.my_text.lower()
+                    app.root.get_screen("correction").refresh()
+                    app.root.current = "correction"
+                    root.manager.transition.direction = "left"
+            Button:
+                text: "Deliberation"
+                on_release:
+                    app.root.get_screen("deliberation").refresh()
+                    app.root.current = "deliberation"
                     root.manager.transition.direction = "left"
             Button:
                 text: "Statistiques"
                 on_release:
+                    app.root.get_screen("statistiques").refresh()
                     app.root.current = "statistiques"
                     root.manager.transition.direction = "left"
 
@@ -412,7 +424,9 @@ WindowManager:
         multiline: False
         size_hint_y: None
         height: "30dp"
-        on_text: root.note = self.text
+        on_text:
+            root.note = self.text
+            print(root.note)
 
 
 <CorrectionScreen>:
@@ -432,9 +446,9 @@ WindowManager:
 #---------------------Deliberation------------------------------------------------------------------------
 <DeliberationTabHeader>:
     size_hint_y: None
-    height: "30dp"
+    height: 30
     Label:
-        text: "No"
+        text: "NUM"
         size_hint_x: .1
         bold: True
     Label:
@@ -447,17 +461,20 @@ WindowManager:
         bold: True
     Label:
         text: "SEXE"
-        size_hint_x: .2
+        size_hint_x: .1
         bold: True
     Label:
         text: "ETABLISSEMENT"
         size_hint_x: .2
         bold: True
     Label:
-        text: "RANG"
-        size_hint_x: .1
+        text: "STATUT"
+        size_hint_x: .2
         bold: True
 
+<DeliberationLine>:
+    size_hint_y: None
+    height: 30
 
 <DeliberationScreen>:
     name: "deliberation"
@@ -465,12 +482,22 @@ WindowManager:
         orientation: "vertical"
         DeliberationTabPanel:
         BoxLayout:
+            size_hint_y: None
+            height: "40dp"
             Button:
                 size_hint_y: None
                 height: "40dp"
                 pos_hint: {"x":0}
                 text: "Imprimer le PV"
                 on_release:
+                    ImpressBFEM().pv_bfem() if not BrevetDB().liste_copies_non_notees() else None
+                    ImpressBFEM().pv_bfem(tour="SECOND TOUR") if not BrevetDB().liste_copies_non_notees(tour="SECOND TOUR") else None
+            Button:
+                size_hint_y: None
+                height: "40dp"
+                pos_hint: {"x":0}
+                text: "Imprimer les relevés"
+                on_release: ImpressBFEM.releves_note()
             Button:
                 size_hint_y: None
                 height: "40dp"
@@ -525,5 +552,6 @@ WindowManager:
             size_hint: 1, .1
             text: "Go Back"
             on_release:
+                app.root.get_screen("candidate").refresh()
                 app.root.current = "candidate"
                 root.manager.transition.direction = "right"
